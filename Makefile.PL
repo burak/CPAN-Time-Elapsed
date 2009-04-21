@@ -13,6 +13,6 @@ WriteMakefile(
     PL_FILES     => {},
     ($] >= 5.005 ? (
     AUTHOR       => $spec{dist_author},
-    ABSTRACT     => 'Displays the elapsed time as a human readable string.',
+    ABSTRACT     => $spec{ABSTRACT},
     ) : ()),
 );
