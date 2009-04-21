@@ -3,7 +3,6 @@ lib/Time/Elapsed/Lang/EN.pm
 lib/Time/Elapsed/Lang/TR.pm
 lib/Time/Elapsed/Lang/DE.pm
 t/03-simple.t
-Makefile.PL
 Build.PL
 Changes
 MANIFEST
