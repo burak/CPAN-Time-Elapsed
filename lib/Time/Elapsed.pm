@@ -1,7 +1,7 @@
 package Time::Elapsed;
 use strict;
 use utf8;
-use vars qw( $VERSION @ISA @EXPORT_OK %EXPORT_TAGS );
+use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 # time constants
 use constant SECOND     =>   1;
 use constant MINUTE     =>  60 * SECOND;
@@ -16,10 +16,10 @@ use constant FIXER      => 2;
 use Exporter ();
 use Carp qw( croak );
 
-$VERSION     = '0.28';
+$VERSION     = '0.29';
 @ISA         = qw( Exporter );
-@EXPORT_OK   = qw( elapsed  );
-%EXPORT_TAGS = ( all => [ @EXPORT_OK ] );
+@EXPORT      = qw( elapsed  );
+%EXPORT_TAGS = ( all => [ @EXPORT, @EXPORT_OK ] );
 
 # elapsed time formatter keys
 my $ELAPSED = {
