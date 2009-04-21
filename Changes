@@ -2,6 +2,9 @@ Revision history for Perl extension Time::Elapsed.
 
 Time zone is GMT+2.
 
+0.26 Tue Apr 21 07:03:56 2009
+   => Update build tools.
+
 0.25 Sat Apr 18 06:56:15 2009
    => Update distro tools.
 

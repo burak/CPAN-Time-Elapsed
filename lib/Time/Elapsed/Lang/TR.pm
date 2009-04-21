@@ -47,6 +47,14 @@ Private module.
 
 Private module.
 
+=head1 METHODS
+
+=head2 singular
+
+=head2 plural
+
+=head2 other
+
 =head1 SEE ALSO
 
 L<Time::Elapsed>.

@@ -1,44 +1,8 @@
 use strict;
-use Module::Build;
-use File::Spec;
-use IO::File;
+use lib qw( builder );
+use Build;
 
-my $class = Module::Build->subclass(
-                class => 'MBSubclass',
-                code  => raw_subclass(),
-            );
-
-my $mb = $class->new(
-    module_name    => 'Time::Elapsed',
-    license        => 'perl',
-    requires       => {},
-    recommends     => {},
-    build_requires => {
-        'Test::More' => '0.40',
-    },
-    sign           => 0,
-    dist_author    => 'Burak Gursoy <burak@cpan.org>',
-    create_license => 1,
-    no_index       => {
-        directory => [
-            'tools',
-            't',
-        ]
-    },
-    meta_merge => {
-        resources => {
-            repository => 'http://bitbucket.org/burak/cpan-time-elapsed/',
-        },
-    },
-);
-
+my %opt = do 'SPEC' or die "Can not include PREREQ: $@";
+my $mb  = Build->new( %opt );
+$mb->change_versions(1);
 $mb->create_build_script;
-
-sub raw_subclass {
-    my $file = File::Spec->catfile( 'tools', 'Build.pm' );
-    my $FH   = IO::File->new;
-    $FH->open( $file, 'r' ) or die "Can not open($file): $!";
-    my $rv = do { local $/; <$FH> };
-    close $FH;
-    return $rv;
-}

@@ -15,7 +15,7 @@ use constant MULTIPLIER => 1;
 use Exporter ();
 use Carp qw( croak );
 
-$VERSION     = '0.25';
+$VERSION     = '0.26';
 @ISA         = qw( Exporter );
 @EXPORT_OK   = qw( elapsed  );
 %EXPORT_TAGS = ( all => [ @EXPORT_OK ] );

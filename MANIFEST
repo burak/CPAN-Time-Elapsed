@@ -2,13 +2,11 @@ lib/Time/Elapsed.pm
 lib/Time/Elapsed/Lang/EN.pm
 lib/Time/Elapsed/Lang/TR.pm
 lib/Time/Elapsed/Lang/DE.pm
-t/01-pod.t
-t/02-pod-coverage.t
 t/03-simple.t
-tools/Build.pm
 Makefile.PL
 Build.PL
 Changes
 MANIFEST
 README
 META.yml
+SPEC
