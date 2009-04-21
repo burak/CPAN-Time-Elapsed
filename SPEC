@@ -1,0 +1,12 @@
+module_name    => 'Time::Elapsed',
+requires       => {},
+build_requires => {
+    'Test::More' => '0.40',
+},
+recommends     => {},
+dist_author    => 'Burak Gursoy <burak@cpan.org>',
+meta_merge     => {
+    resources => {
+        repository => 'http://bitbucket.org/burak/cpan-time-elapsed/',
+    },
+},
