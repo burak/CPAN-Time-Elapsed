@@ -1,7 +1,7 @@
 package Time::Elapsed;
 use strict;
 use utf8;
-use vars qw( $VERSION @ISA @EXPORT_OK %EXPORT_TAGS $OID );
+use vars qw( $VERSION @ISA @EXPORT_OK %EXPORT_TAGS );
 # time constants
 use constant SECOND     =>   1;
 use constant MINUTE     =>  60 * SECOND;
@@ -10,10 +10,9 @@ use constant DAY        =>  24 * HOUR;
 use constant MONTH      =>  30 * DAY;
 use constant YEAR       => 365 * DAY;
 # elapsed data fields
-BEGIN { $OID = -1 }
-use constant INDEX      => ++$OID;
-use constant MULTIPLIER => ++$OID;
-use constant FIXER      => ++$OID;
+use constant INDEX      => 0;
+use constant MULTIPLIER => 1;
+use constant FIXER      => 2;
 use Exporter ();
 use Carp qw( croak );
 
