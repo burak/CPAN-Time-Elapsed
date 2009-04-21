@@ -1,7 +1,7 @@
 package Time::Elapsed;
 use strict;
 use utf8;
-use vars qw( $VERSION @ISA @EXPORT_OK %EXPORT_TAGS );
+use vars qw( $VERSION @ISA @EXPORT_OK %EXPORT_TAGS $OID );
 # time constants
 use constant SECOND     =>   1;
 use constant MINUTE     =>  60 * SECOND;
@@ -10,35 +10,31 @@ use constant DAY        =>  24 * HOUR;
 use constant MONTH      =>  30 * DAY;
 use constant YEAR       => 365 * DAY;
 # elapsed data fields
-use constant INDEX      => 0;
-use constant MULTIPLIER => 1;
+BEGIN { $OID = -1 }
+use constant INDEX      => ++$OID;
+use constant MULTIPLIER => ++$OID;
+use constant FIXER      => ++$OID;
 use Exporter ();
 use Carp qw( croak );
 
-$VERSION     = '0.27';
+$VERSION     = '0.28';
 @ISA         = qw( Exporter );
 @EXPORT_OK   = qw( elapsed  );
 %EXPORT_TAGS = ( all => [ @EXPORT_OK ] );
 
 # elapsed time formatter keys
 my $ELAPSED = {
-   # name      index  multiplier
-   second => [  0,      60     ],
-   minute => [  1,      60     ],
-   hour   => [  2,      60     ],
-   day    => [  3,      24     ],
-   month  => [  4,      30     ],
-   year   => [  5,      12     ],
+   # name       index   multiplier   fixer
+   second => [  0,      60,          60    ],
+   minute => [  1,      60,          60    ],
+   hour   => [  2,      60,          24    ],
+   day    => [  3,      24,          30    ],
+   month  => [  4,      30,          12    ],
+   year   => [  5,      12,           1    ],
 };
 
 my $FIXER = { # formatter  for _fixer()
-   # name    multiplier
-   second => 60,
-   minute => 60,
-   hour   => 24,
-   day    => 30,
-   month  => 12,
-   year   =>  1,
+   map { $_ => $ELAPSED->{$_}[FIXER] } keys %{ $ELAPSED }
 };
 
 my @NAMES = sort  { $ELAPSED->{ $a }[INDEX] <=> $ELAPSED->{ $b }[INDEX] }
