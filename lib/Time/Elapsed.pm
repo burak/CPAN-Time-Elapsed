@@ -132,13 +132,15 @@ sub _parser { # recursive formatter/parser
 
 sub _examine {
    my($sec, $weeks) = @_;
-   return( year   => $sec / YEAR   ) if ( $sec >= YEAR   );
-   return( month  => $sec / MONTH  ) if ( $sec >= MONTH  );
-   return( week   => $sec / WEEK   ) if ( $sec >= WEEK && $weeks );
-   return( day    => $sec / DAY    ) if ( $sec >= DAY    );
-   return( hour   => $sec / HOUR   ) if ( $sec >= HOUR   );
-   return( minute => $sec / MINUTE ) if ( $sec >= MINUTE );
-   return( second => $sec          );
+   return
+     $sec >= YEAR           ? ( year   => $sec / YEAR   )
+   : $sec >= MONTH          ? ( month  => $sec / MONTH  )
+   : $sec >= WEEK && $weeks ? ( week   => $sec / WEEK   )
+   : $sec >= DAY            ? ( day    => $sec / DAY    )
+   : $sec >= HOUR           ? ( hour   => $sec / HOUR   )
+   : $sec >= MINUTE         ? ( minute => $sec / MINUTE )
+   :                          ( second => $sec          )
+   ;
 }
 
 sub _get_lang {
