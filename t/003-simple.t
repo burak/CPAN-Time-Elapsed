@@ -10,6 +10,8 @@ use Time::Elapsed qw( elapsed );
 
 eval q{ binmode Test::More->builder->output, ':utf8'; } if $] >= 5.008;
 
+# WEEK: 612886
+
 # ---[ NORMAL ]--- #
 ok( elapsed(1868405) eq elapsed(1868405, 'EN') , qq{Test1 equals Test2} );
 

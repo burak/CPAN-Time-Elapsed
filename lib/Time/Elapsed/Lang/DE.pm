@@ -11,6 +11,7 @@ sub singular {
    minute  Minute
    hour    Stunde
    day     Tag
+   week    Woche
    month   Monat
    year    Jahr
    /
@@ -22,6 +23,7 @@ sub plural {
    minute  Minuten
    hour    Stunden
    day     Tage
+   week    Wochen
    month   Monate
    year    Jahre
    /

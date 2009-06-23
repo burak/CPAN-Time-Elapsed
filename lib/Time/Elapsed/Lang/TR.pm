@@ -14,6 +14,7 @@ sub singular {
    minute  dakika
    hour    saat
    day     gün
+   week    hafta
    month   ay
    year    yıl
    /

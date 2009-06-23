@@ -7,6 +7,7 @@ use constant SECOND     =>   1;
 use constant MINUTE     =>  60 * SECOND;
 use constant HOUR       =>  60 * MINUTE;
 use constant DAY        =>  24 * HOUR;
+use constant WEEK       =>   7 * DAY;
 use constant MONTH      =>  30 * DAY;
 use constant YEAR       => 365 * DAY;
 # elapsed data fields
@@ -28,8 +29,9 @@ my $ELAPSED = {
    minute => [  1,      60,          60    ],
    hour   => [  2,      60,          24    ],
    day    => [  3,      24,          30    ],
-   month  => [  4,      30,          12    ],
-   year   => [  5,      12,           1    ],
+   week   => [  4,       7,           7    ],
+   month  => [  5,      30,          12    ],
+   year   => [  6,      12,           1    ],
 };
 
 my $FIXER = { # formatter  for _fixer()
@@ -58,13 +60,17 @@ sub import {
 sub elapsed {
    my $sec  = shift;
    return if ! defined $sec;
-   my $lang = shift || 'EN';
+   my $opt  = shift || {};
+      $opt  = { lang => $opt } if ! ref $opt;
       $sec  = 0 if !$sec; # can be empty string
       $sec += 0;          # force number
 
-   my $l   = _get_lang( $lang ); # get language keys
-   return $l->{other}{zero} if !$sec;
-   my @rv  = _populate( $l, _fixer( _parser( _examine( abs $sec ) ) ) );
+   my $l  = _get_lang( $opt->{lang} || 'EN' ); # get language keys
+   return $l->{other}{zero} if ! $sec;
+   my @rv = _populate(
+               $l,
+               _fixer( _parser( _examine( abs $sec, $opt->{weeks} ) ) )
+            );
 
    my $last = pop @rv;
 
@@ -125,9 +131,10 @@ sub _parser { # recursive formatter/parser
 }
 
 sub _examine {
-   my($sec) = @_;
+   my($sec, $weeks) = @_;
    return( year   => $sec / YEAR   ) if ( $sec >= YEAR   );
    return( month  => $sec / MONTH  ) if ( $sec >= MONTH  );
+   return( week   => $sec / WEEK   ) if ( $sec >= WEEK && $weeks );
    return( day    => $sec / DAY    ) if ( $sec >= DAY    );
    return( hour   => $sec / HOUR   ) if ( $sec >= HOUR   );
    return( minute => $sec / MINUTE ) if ( $sec >= MINUTE );
@@ -245,7 +252,7 @@ C<import commands>.
 
 =head1 FUNCTIONS
 
-=head2 elapsed SECONDS [, LANG ]
+=head2 elapsed SECONDS [, OPTIONS ]
 
 =over 4
 
@@ -257,7 +264,19 @@ will be returned.
 
 =item *
 
-The optional argument C<LANG> represents the language to use when
+The optional argument C<OPTIONS> is a either a string containing the language
+id or a hashref containing several options. These two codes are equal:
+
+   elapsed $secs, 'DE';
+   elapsed $secs, { lang => 'DE' };
+
+The hashref is used to pass extra options.
+
+=head3 OPTIONS
+
+=head4 lang
+
+The optional argument language id, represents the language to use when
 converting the data to a string. The language section is really a
 standalone module in the C<Time::Elapsed::Lang::> namespace, so it is
 possible to extend the language support on your own. Currently
@@ -270,6 +289,12 @@ supported languages are:
       DE      German
 
 Language ids are case-insensitive. These are all same: C<en>, C<EN>, C<eN>.
+
+=head4 weeks
+
+If this option is present and set to a treu value, then you'll get "weeks"
+instead of "days" in the output if the output has a days value between 29 days
+and 7 days.
 
 =back
 
