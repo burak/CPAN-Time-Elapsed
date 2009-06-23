@@ -17,7 +17,7 @@ use constant FIXER      => 2;
 use Exporter ();
 use Carp qw( croak );
 
-$VERSION     = '0.29';
+$VERSION     = '0.30';
 @ISA         = qw( Exporter );
 @EXPORT      = qw( elapsed  );
 %EXPORT_TAGS = ( all => [ @EXPORT, @EXPORT_OK ] );
@@ -67,6 +67,7 @@ sub elapsed {
 
    my $l  = _get_lang( $opt->{lang} || 'EN' ); # get language keys
    return $l->{other}{zero} if ! $sec;
+
    my @rv = _populate(
                $l,
                _fixer( _parser( _examine( abs $sec, $opt->{weeks} ) ) )
@@ -74,16 +75,16 @@ sub elapsed {
 
    my $last = pop @rv;
 
-   return join(', ', @rv) . " $l->{other}{and} $last" if @rv;
-   return $last; # only a single value, no need for template/etc.
+   return @rv ? join(', ', @rv) . " $l->{other}{and} $last"
+              : $last; # only a single value, no need for template/etc.
 }
 
 sub _populate {
    my($l, @parsed) = @_;
-   my(@buf, $type);
+   my @buf;
    foreach my $e ( @parsed ) {
       next if ! $e->[MULTIPLIER]; # disable zero values
-      $type = $e->[MULTIPLIER] > 1 ? 'plural' : 'singular';
+      my $type = $e->[MULTIPLIER] > 1 ? 'plural' : 'singular';
       push @buf, join(' ', $e->[MULTIPLIER], $l->{ $type }{ $e->[INDEX] } );
    }
    return @buf;
@@ -165,6 +166,7 @@ sub _set_lang_cache {
       plural   => { $class->plural   },
       other    => { $class->other    },
    };
+   return;
 }
 
 sub _compile_all {
@@ -192,6 +194,8 @@ sub _compile_all {
    foreach my $id ( keys %lang ) {
       _get_lang( $id );
    }
+
+   return;
 }
 
 1;
