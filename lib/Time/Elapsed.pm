@@ -44,31 +44,24 @@ my $ELAPSED_W = {
    year   => [  6,      12,           1    ],
 };
 
-my $FIXER = { # formatter  for _fixer()
-   map { $_ => $ELAPSED->{$_}[FIXER] } keys %{ $ELAPSED }
-};
+# formatters  for _fixer()
+my $FIXER   = { map { $_ => $ELAPSED->{$_}[FIXER]   } keys %{ $ELAPSED   } };
+my $FIXER_W = { map { $_ => $ELAPSED_W->{$_}[FIXER] } keys %{ $ELAPSED_W } };
 
-my $FIXER_W = { # formatter  for _fixer()
-   map { $_ => $ELAPSED_W->{$_}[FIXER] } keys %{ $ELAPSED_W }
-};
+my $NAMES = [ sort  { $ELAPSED->{ $a }[INDEX] <=> $ELAPSED->{ $b }[INDEX] }
+            keys %{ $ELAPSED } ];
 
-my @NAMES = sort  { $ELAPSED->{ $a }[INDEX] <=> $ELAPSED->{ $b }[INDEX] }
-            keys %{ $ELAPSED };
-
-my @NAMES_W = sort  { $ELAPSED_W->{ $a }[INDEX] <=> $ELAPSED_W->{ $b }[INDEX] }
-            keys %{ $ELAPSED_W };
+my $NAMES_W = [ sort  { $ELAPSED_W->{ $a }[INDEX] <=> $ELAPSED_W->{ $b }[INDEX] }
+              keys %{ $ELAPSED_W } ];
 
 my $LCACHE; # language cache
 
 sub import {
-   my $class   = shift;
-   my @raw     = @_;
+   my $class = shift;
+   my @raw   = @_;
    my @exports;
    foreach my $e ( @raw ) {
-      if ( $e eq '-compile' ) {
-         _compile_all();
-         next;
-      }
+      _compile_all() && next if $e eq '-compile';
       push @exports, $e;
    }
    $class->export_to_level( 1, $class, @exports );
@@ -122,7 +115,7 @@ sub _fixer {
 
    my $f = $weeks ? $FIXER_W   : $FIXER;
    my $e = $weeks ? $ELAPSED_W : $ELAPSED;
-   my $n = $weeks ? \@NAMES_W  : \@NAMES_W;
+   my $n = $weeks ? $NAMES_W   : $NAMES;
 
    my @top;
    foreach my $i ( reverse 0..$#raw ) {
@@ -137,27 +130,27 @@ sub _fixer {
       if ( $r->[MULTIPLIER] >= $default && $r->[INDEX] ne 'year' ) {
          $add = int $r->[MULTIPLIER] / $default;
          $r->[MULTIPLIER] -= $default * $add;
-         if ( $i == 0  ) {
+         if ( $i == 0  ) { # we need to add to a non-existent upper level
             my $id = $e->{ $r->[INDEX] }[INDEX];
-            my $up = $n->[ $id + 1 ] || die "Can not happen: unable to reach top-level";
+            my $up = $n->[ $id + 1 ]
+                        || die "Can not happen: unable to locate top-level";
             unshift @top, [ $up, $add ];
          }
       }
 
       unshift @fixed, [ $r->[INDEX], $r->[MULTIPLIER] ];
    }
+
    unshift @fixed, @top;
    return @fixed;
 }
 
 sub _parser { # recursive formatter/parser
    my($weeks, $id, $mul) = @_;
-   my $e         = $weeks ? $ELAPSED_W : $ELAPSED;
-   my $xmid      = $e->{ $id }[INDEX];
-   my @parsed;
-   push @parsed, [ $id,  $xmid ? int($mul) : sprintf('%.0f', $mul) ];
-
-   my $n = $weeks ? \@NAMES_W : \@NAMES;
+   my $e      = $weeks ? $ELAPSED_W : $ELAPSED;
+   my $n      = $weeks ? $NAMES_W   : $NAMES;
+   my $xmid   = $e->{ $id }[INDEX];
+   my @parsed = [ $id,  $xmid ? int($mul) : sprintf('%.0f', $mul) ];
 
    if ( $xmid ) {
       push @parsed, _parser(
@@ -234,7 +227,7 @@ sub _compile_all {
       _get_lang( $id );
    }
 
-   return;
+   return 1;
 }
 
 1;
