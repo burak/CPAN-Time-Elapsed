@@ -29,8 +29,18 @@ my $ELAPSED = {
    minute => [  1,      60,          60    ],
    hour   => [  2,      60,          24    ],
    day    => [  3,      24,          30    ],
-   week   => [  4,       7,           7    ],
-   month  => [  5,      30,          12    ],
+   month  => [  4,      30,          12    ],
+   year   => [  5,      12,           1    ],
+};
+
+my $ELAPSED_W = {
+   # name       index   multiplier   fixer
+   second => [  0,      60,          60    ],
+   minute => [  1,      60,          60    ],
+   hour   => [  2,      60,          24    ],
+   day    => [  3,      24,           7    ],
+   week   => [  4,       7,           4    ],
+   month  => [  5,       4,          12    ],
    year   => [  6,      12,           1    ],
 };
 
@@ -38,8 +48,15 @@ my $FIXER = { # formatter  for _fixer()
    map { $_ => $ELAPSED->{$_}[FIXER] } keys %{ $ELAPSED }
 };
 
+my $FIXER_W = { # formatter  for _fixer()
+   map { $_ => $ELAPSED_W->{$_}[FIXER] } keys %{ $ELAPSED_W }
+};
+
 my @NAMES = sort  { $ELAPSED->{ $a }[INDEX] <=> $ELAPSED->{ $b }[INDEX] }
             keys %{ $ELAPSED };
+
+my @NAMES_W = sort  { $ELAPSED_W->{ $a }[INDEX] <=> $ELAPSED_W->{ $b }[INDEX] }
+            keys %{ $ELAPSED_W };
 
 my $LCACHE; # language cache
 
@@ -68,9 +85,16 @@ sub elapsed {
    my $l  = _get_lang( $opt->{lang} || 'EN' ); # get language keys
    return $l->{other}{zero} if ! $sec;
 
+   my $w  = $opt->{weeks} || 0;
    my @rv = _populate(
                $l,
-               _fixer( _parser( _examine( abs $sec, $opt->{weeks} ) ) )
+               _fixer(
+                  $w,
+                  _parser(
+                     $w,
+                     _examine( abs($sec), $w )
+                  )
+               )
             );
 
    my $last = pop @rv;
@@ -92,39 +116,54 @@ sub _populate {
 
 sub _fixer {
    # There can be values like "60 seconds". _fixer() corrects this kind of error
+   my $weeks = shift;
    my @raw = @_;
    my(@fixed,$default,$add);
 
-   foreach my $e ( reverse @raw ) {
-      $default = $FIXER->{ $e->[INDEX] };
+   my $f = $weeks ? $FIXER_W   : $FIXER;
+   my $e = $weeks ? $ELAPSED_W : $ELAPSED;
+   my $n = $weeks ? \@NAMES_W  : \@NAMES_W;
 
+   my @top;
+   foreach my $i ( reverse 0..$#raw ) {
+      my $r = $raw[$i];
+      $default = $f->{ $r->[INDEX] };
       if ( $add ) {
-         $e->[MULTIPLIER] += $add; # we need a fix
+         $r->[MULTIPLIER] += $add; # we need a fix
          $add              = 0;    # reset
       }
 
       # year is the top-most element currently does not have any limits (def=1)
-      if ( $e->[MULTIPLIER] >= $default && $e->[INDEX] ne 'year' ) {
-         $add = int $e->[MULTIPLIER] / $default;
-         $e->[MULTIPLIER] -= $default * $add;
+      if ( $r->[MULTIPLIER] >= $default && $r->[INDEX] ne 'year' ) {
+         $add = int $r->[MULTIPLIER] / $default;
+         $r->[MULTIPLIER] -= $default * $add;
+         if ( $i == 0  ) {
+            my $id = $e->{ $r->[INDEX] }[INDEX];
+            my $up = $n->[ $id + 1 ] || die "Can not happen: unable to reach top-level";
+            unshift @top, [ $up, $add ];
+         }
       }
 
-      unshift @fixed, [ $e->[INDEX], $e->[MULTIPLIER] ];
+      unshift @fixed, [ $r->[INDEX], $r->[MULTIPLIER] ];
    }
-
+   unshift @fixed, @top;
    return @fixed;
 }
 
 sub _parser { # recursive formatter/parser
-   my($id, $mul) = @_;
-   my $xmid      = $ELAPSED->{ $id }[INDEX];
+   my($weeks, $id, $mul) = @_;
+   my $e         = $weeks ? $ELAPSED_W : $ELAPSED;
+   my $xmid      = $e->{ $id }[INDEX];
    my @parsed;
    push @parsed, [ $id,  $xmid ? int($mul) : sprintf('%.0f', $mul) ];
 
+   my $n = $weeks ? \@NAMES_W : \@NAMES;
+
    if ( $xmid ) {
       push @parsed, _parser(
-         $NAMES[ $xmid - 1 ],
-        ($mul - int $mul) * $ELAPSED->{$id}[MULTIPLIER]
+         $weeks,
+         $n->[ $xmid - 1 ],
+        ($mul - int $mul) * $e->{$id}[MULTIPLIER]
       );
    }
 
