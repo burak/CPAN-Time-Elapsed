@@ -310,6 +310,8 @@ id or a hashref containing several options. These two codes are equal:
 
 The hashref is used to pass extra options.
 
+=back
+
 =head3 OPTIONS
 
 =head4 lang
@@ -333,8 +335,6 @@ Language ids are case-insensitive. These are all same: C<en>, C<EN>, C<eN>.
 If this option is present and set to a treu value, then you'll get "weeks"
 instead of "days" in the output if the output has a days value between 29 days
 and 7 days.
-
-=back
 
 =head1 CAVEATS
 
@@ -373,19 +373,5 @@ language will probably need unicode support.
 
 L<PTools::Time::Elapsed>, L<DateTime>, L<DateTime::Format::Duration>,
 L<Time::Duration>.
-
-=head1 AUTHOR
-
-Burak Gürsoy, E<lt>burakE<64>cpan.orgE<gt>
-
-=head1 COPYRIGHT
-
-Copyright 2007-2009 Burak Gürsoy. All rights reserved.
-
-=head1 LICENSE
-
-This library is free software; you can redistribute it and/or modify 
-it under the same terms as Perl itself, either Perl version 5.8.8 or, 
-at your option, any later version of Perl 5 you may have available.
 
 =cut
