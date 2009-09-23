@@ -2,6 +2,9 @@ Revision history for Perl extension Time::Elapsed.
 
 Time zone is GMT+2.
 
+0.31 Tue Sep 22 02:05:24 2009
+   => Perl::Critic refactoring.
+
 0.30 Wed Jun 24 00:42:57 2009
    => Added "week" suport to the output. Disabled by default.
    => Extended the second parameter to elapsed() to a hashref.

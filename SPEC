@@ -1,6 +1,14 @@
 {
-    module_name    => 'Time::Elapsed',
-    meta_merge     => {
+    module_name => 'Time::Elapsed',
+    requires    => {
+        ( $] < 5.006 ? (
+            'warnings::compat' => 0,
+        ) : ()),
+    },
+    build_requires => {
+        'Test::More' => '0.40',
+    },
+    meta_merge => {
         resources => {
             repository => 'http://bitbucket.org/burak/cpan-time-elapsed/',
         },

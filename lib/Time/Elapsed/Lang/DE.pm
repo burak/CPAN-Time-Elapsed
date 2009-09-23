@@ -1,12 +1,13 @@
 package Time::Elapsed::Lang::DE;
 use strict;
+use warnings;
 use utf8;
 use vars qw( $VERSION );
 
 $VERSION = '0.10';
 
 sub singular {
-   qw/
+   return qw/
    second  Sekunde
    minute  Minute
    hour    Stunde
@@ -18,7 +19,7 @@ sub singular {
 }
 
 sub plural {
-   qw/
+   return qw/
    second  Sekunden
    minute  Minuten
    hour    Stunden
@@ -30,7 +31,7 @@ sub plural {
 }
 
 sub other {
-   qw/
+   return qw/
    and     und
    ago     vor
    /,

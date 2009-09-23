@@ -1,5 +1,6 @@
 package Time::Elapsed;
 use strict;
+use warnings;
 use utf8;
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
 # time constants
@@ -14,57 +15,68 @@ use constant YEAR       => 365 * DAY;
 use constant INDEX      => 0;
 use constant MULTIPLIER => 1;
 use constant FIXER      => 2;
-use Exporter ();
+use base qw( Exporter );
 use Carp qw( croak );
 
-$VERSION     = '0.30';
-@ISA         = qw( Exporter );
-@EXPORT      = qw( elapsed  );
-%EXPORT_TAGS = ( all => [ @EXPORT, @EXPORT_OK ] );
+use constant T_SECOND => 60;
+use constant T_MINUTE => T_SECOND;
+use constant T_HOUR   => T_SECOND;
+use constant T_DAY    => 24;
+use constant T_WEEK   =>  7;
+use constant T_MONTH  => 30;
+use constant T_MONTHW =>  4;
+use constant T_YEAR   => 12;
+
+BEGIN {
+   $VERSION     = '0.31';
+   @EXPORT      = qw( elapsed  );
+   %EXPORT_TAGS = ( all => [ @EXPORT, @EXPORT_OK ] );
+}
 
 # elapsed time formatter keys
+my $EC = 0;
 my $ELAPSED = {
    # name       index   multiplier   fixer
-   second => [  0,      60,          60    ],
-   minute => [  1,      60,          60    ],
-   hour   => [  2,      60,          24    ],
-   day    => [  3,      24,          30    ],
-   month  => [  4,      30,          12    ],
-   year   => [  5,      12,           1    ],
+   second => [  $EC++,  T_SECOND,    T_MINUTE ],
+   minute => [  $EC++,  T_MINUTE,    T_HOUR   ],
+   hour   => [  $EC++,  T_HOUR,      T_DAY    ],
+   day    => [  $EC++,  T_DAY,       T_MONTH  ],
+   month  => [  $EC++,  T_MONTH,     T_YEAR   ],
+   year   => [  $EC++,  T_YEAR,      1        ],
 };
 
+my $EW = 0;
 my $ELAPSED_W = {
    # name       index   multiplier   fixer
-   second => [  0,      60,          60    ],
-   minute => [  1,      60,          60    ],
-   hour   => [  2,      60,          24    ],
-   day    => [  3,      24,           7    ],
-   week   => [  4,       7,           4    ],
-   month  => [  5,       4,          12    ],
-   year   => [  6,      12,           1    ],
+   second => [  $EW++,  T_SECOND,    T_MINUTE ],
+   minute => [  $EW++,  T_MINUTE,    T_HOUR   ],
+   hour   => [  $EW++,  T_HOUR,      T_DAY    ],
+   day    => [  $EW++,  T_DAY,       T_WEEK   ],
+   week   => [  $EW++,  T_WEEK,      T_MONTHW ],
+   month  => [  $EW++,  T_MONTHW,    T_YEAR   ],
+   year   => [  $EW++,  T_YEAR,      1        ],
 };
 
 # formatters  for _fixer()
 my $FIXER   = { map { $_ => $ELAPSED->{$_}[FIXER]   } keys %{ $ELAPSED   } };
 my $FIXER_W = { map { $_ => $ELAPSED_W->{$_}[FIXER] } keys %{ $ELAPSED_W } };
 
-my $NAMES = [ sort  { $ELAPSED->{ $a }[INDEX] <=> $ELAPSED->{ $b }[INDEX] }
-            keys %{ $ELAPSED } ];
+my $NAMES   = [ sort  { $ELAPSED->{ $a }[INDEX] <=> $ELAPSED->{ $b }[INDEX] }
+                keys %{ $ELAPSED } ];
 
 my $NAMES_W = [ sort  { $ELAPSED_W->{ $a }[INDEX] <=> $ELAPSED_W->{ $b }[INDEX] }
-              keys %{ $ELAPSED_W } ];
+                keys %{ $ELAPSED_W } ];
 
 my $LCACHE; # language cache
 
 sub import {
-   my $class = shift;
-   my @raw   = @_;
+   my($class, @raw) = @_;
    my @exports;
    foreach my $e ( @raw ) {
       _compile_all() && next if $e eq '-compile';
       push @exports, $e;
    }
-   $class->export_to_level( 1, $class, @exports );
+   return $class->export_to_level( 1, $class, @exports );
 }
 
 sub elapsed {
@@ -90,10 +102,10 @@ sub elapsed {
                )
             );
 
-   my $last = pop @rv;
+   my $last_value = pop @rv;
 
-   return @rv ? join(', ', @rv) . " $l->{other}{and} $last"
-              : $last; # only a single value, no need for template/etc.
+   return @rv ? join(', ', @rv) . " $l->{other}{and} $last_value"
+              : $last_value; # only a single value, no need for template/etc.
 }
 
 sub _populate {
@@ -102,15 +114,14 @@ sub _populate {
    foreach my $e ( @parsed ) {
       next if ! $e->[MULTIPLIER]; # disable zero values
       my $type = $e->[MULTIPLIER] > 1 ? 'plural' : 'singular';
-      push @buf, join(' ', $e->[MULTIPLIER], $l->{ $type }{ $e->[INDEX] } );
+      push @buf, join q{ }, $e->[MULTIPLIER], $l->{ $type }{ $e->[INDEX] };
    }
    return @buf;
 }
 
 sub _fixer {
    # There can be values like "60 seconds". _fixer() corrects this kind of error
-   my $weeks = shift;
-   my @raw = @_;
+   my($weeks, @raw) = @_;
    my(@fixed,$default,$add);
 
    my $f = $weeks ? $FIXER_W   : $FIXER;
@@ -133,7 +144,7 @@ sub _fixer {
          if ( $i == 0  ) { # we need to add to a non-existent upper level
             my $id = $e->{ $r->[INDEX] }[INDEX];
             my $up = $n->[ $id + 1 ]
-                        || die "Can not happen: unable to locate top-level";
+                        || die "Can not happen: unable to locate top-level\n";
             unshift @top, [ $up, $add ];
          }
       }
@@ -150,7 +161,7 @@ sub _parser { # recursive formatter/parser
    my $e      = $weeks ? $ELAPSED_W : $ELAPSED;
    my $n      = $weeks ? $NAMES_W   : $NAMES;
    my $xmid   = $e->{ $id }[INDEX];
-   my @parsed = [ $id,  $xmid ? int($mul) : sprintf('%.0f', $mul) ];
+   my @parsed = [ $id,  $xmid ? int $mul : sprintf '%.0f', $mul ];
 
    if ( $xmid ) {
       push @parsed, _parser(
@@ -177,11 +188,11 @@ sub _examine {
 }
 
 sub _get_lang {
-   my $lang = shift || croak "_get_lang(): Language ID is missing";
+   my $lang = shift || croak '_get_lang(): Language ID is missing';
       $lang = uc $lang;
    if ( ! exists $LCACHE->{ $lang } ) {
-      if ( $lang =~ m{[^a-z_A-Z_0-9]}xmso || $lang =~ m{ \A [0-9] }xmso) {
-         die "Bad language identifier: $lang";
+      if ( $lang =~ m{[^a-z_A-Z_0-9]}xms || $lang =~ m{ \A [0-9] }xms ) {
+         croak "Bad language identifier: $lang";
       }
       _set_lang_cache( $lang );
    }
@@ -190,8 +201,8 @@ sub _get_lang {
 
 sub _set_lang_cache {
    my($lang) = @_;
-   my $class = join '::', __PACKAGE__, 'Lang', $lang;
-   my $file  = join('/', split /::/, $class ) . '.pm';
+   my $class = join q{::}, __PACKAGE__, 'Lang', $lang;
+   my $file  = join(q{/} , split m{::}xms, $class ) . '.pm';
    require $file;
    $LCACHE->{ $lang } = {
       singular => { $class->singular },
@@ -203,23 +214,24 @@ sub _set_lang_cache {
 
 sub _compile_all {
    require File::Spec;
-   local *LDIR;
+   require Symbol;
    my($test, %lang);
 
    # search lib paths
    foreach my $lib ( @INC ) {
       $test = File::Spec->catfile( $lib, qw/ Time Elapsed Lang /);
       next if not -d $test;
-      opendir LDIR, $test or die "opendir($test): $!";
+      my $LDIR = Symbol::gensym();
+      opendir $LDIR, $test or croak "opendir($test): $!";
 
-      while ( my $file = readdir LDIR ) {
+      while ( my $file = readdir $LDIR ) {
          next if -d $file;
          if ( $file =~ m{ \A (.+?) \. pm \z }xms ) {
             $lang{ uc $1 }++;
          }
       }
 
-      closedir LDIR;
+      closedir $LDIR;
    }
 
    # compile language data
@@ -333,8 +345,8 @@ Language ids are case-insensitive. These are all same: C<en>, C<EN>, C<eN>.
 =head4 weeks
 
 If this option is present and set to a treu value, then you'll get "weeks"
-instead of "days" in the output if the output has a days value between 29 days
-and 7 days.
+instead of "days" in the output if the output has a days value between 7 days
+and 28 days.
 
 =head1 CAVEATS
 
@@ -361,7 +373,7 @@ UTF-8 values whenever possible.
 
 =item *
 
-Currently, the module won't work with any perl older than 5.6 because of
+Currently, the module won't work with any perls older than 5.6 because of
 the UTF-8 encoding and the usage of L<utf8> pragma. However, the pragma
 limitation can be by-passed with a C<%INC> trick under 5.005_04 (tested)
 and can be used with english language (default behavior), but any other
