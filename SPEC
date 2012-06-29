@@ -13,4 +13,9 @@
             repository => 'http://bitbucket.org/burak/cpan-time-elapsed/',
         },
     },
+    BUILDER => {
+        change_versions                  => 1,
+        copyright_first_year             => 2007,
+        add_pod_author_copyright_license => 1,
+    },
 }
