@@ -1,10 +1,6 @@
 {
     module_name => 'Time::Elapsed',
-    requires    => {
-        ( $] < 5.006 ? (
-            'warnings::compat' => 0,
-        ) : ()),
-    },
+    requires    => {},
     build_requires => {
         'Test::More' => '0.40',
     },
