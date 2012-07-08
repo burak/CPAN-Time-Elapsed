@@ -28,7 +28,7 @@ use constant T_MONTHW =>  4;
 use constant T_YEAR   => 12;
 
 BEGIN {
-   $VERSION     = '0.31';
+   $VERSION     = '0.32';
    @EXPORT      = qw( elapsed  );
    %EXPORT_TAGS = ( all => [ @EXPORT, @EXPORT_OK ] );
 }
