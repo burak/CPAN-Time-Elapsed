@@ -6,7 +6,7 @@
     },
     meta_merge => {
         resources => {
-            repository => 'http://bitbucket.org/burak/cpan-time-elapsed/',
+            repository => 'http://github.com/burak/cpan-time-elapsed/',
         },
     },
     BUILDER => {
