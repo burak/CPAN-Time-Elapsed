@@ -1,7 +1,8 @@
 Revision history for Perl extension Time::Elapsed.
 
-0.32 Sun Jul  8 01:50:04 2012
+0.32 Tue Jul  5 00:26:23 2016
     => Bump version.
+    => New Danish language file (jonasbn)
 
 0.31 Tue Sep 22 02:05:24 2009
    => Perl::Critic refactoring.
