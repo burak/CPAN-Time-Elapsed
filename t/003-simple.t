@@ -21,11 +21,13 @@ test( TEST_STAMP_1, __ => '21 days, 15 hours and 5 seconds'    );
 test( TEST_STAMP_1, EN => '21 days, 15 hours and 5 seconds'    );
 test( TEST_STAMP_1, TR => '21 gün, 15 saat ve 5 saniye'        );
 test( TEST_STAMP_1, DE => '21 Tage, 15 Stunden und 5 Sekunden' );
+test( TEST_STAMP_1, DA => '21 dage, 15 timer og 5 sekunder' );
 
 test( TEST_STAMP_2, __ => '21 days, 15 hours and 1 second'     );
 test( TEST_STAMP_2, EN => '21 days, 15 hours and 1 second'     );
 test( TEST_STAMP_2, TR => '21 gün, 15 saat ve 1 saniye'        );
 test( TEST_STAMP_2, DE => '21 Tage, 15 Stunden und 1 Sekunde'  );
+test( TEST_STAMP_2, DA => '21 dage, 15 timer og 1 sekund'  );
 
 # ---[ UNDEF ]--- #
 ok( ! defined( elapsed()      ), q{Parameter is undef} );
@@ -35,6 +37,7 @@ ok( ! defined( elapsed(undef) ), q{Parameter is undef} );
 _false( EN => 'zero seconds' );
 _false( TR => 'sıfır saniye' );
 _false( DE => 'Nullsekunden' );
+_false( DA => 'nul sekunder' );
 
 sub _false {
    my $lang   = shift || 'EN';
