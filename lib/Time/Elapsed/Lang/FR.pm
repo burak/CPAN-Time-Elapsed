@@ -1,8 +1,8 @@
 package Time::Elapsed::Lang::FR;
+
 use strict;
 use warnings;
 use utf8;
-use vars qw( $VERSION );
 
 sub singular {
    return qw/

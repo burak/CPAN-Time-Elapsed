@@ -1,10 +1,8 @@
 package Time::Elapsed::Lang::DA;
+
 use strict;
 use warnings;
 use utf8;
-use vars qw( $VERSION );
-
-$VERSION = '0.01';
 
 sub singular {
    return qw/

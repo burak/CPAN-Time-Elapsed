@@ -1,8 +1,9 @@
 package Time::Elapsed;
+
 use strict;
 use warnings;
 use utf8;
-use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS );
+
 # time constants
 use constant SECOND     =>   1;
 use constant MINUTE     =>  60 * SECOND;
@@ -27,11 +28,8 @@ use constant T_MONTH  => 30;
 use constant T_MONTHW =>  4;
 use constant T_YEAR   => 12;
 
-BEGIN {
-   $VERSION     = '0.32';
-   @EXPORT      = qw( elapsed  );
-   %EXPORT_TAGS = ( all => [ @EXPORT, @EXPORT_OK ] );
-}
+our @EXPORT      = qw( elapsed  );
+our %EXPORT_TAGS = ( all => [ @EXPORT, @EXPORT_OK ] );
 
 # elapsed time formatter keys
 my $EC = 0;

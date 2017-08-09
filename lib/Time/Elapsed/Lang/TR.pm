@@ -1,11 +1,10 @@
 package Time::Elapsed::Lang::TR;
+
 use strict;
 use warnings;
 use vars qw( $VERSION        );
 use subs qw( singular plural );
 use utf8;
-
-$VERSION = '0.14';
 
 *plural = \&singular;
 
