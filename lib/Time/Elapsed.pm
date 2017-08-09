@@ -29,7 +29,7 @@ use constant T_MONTHW =>  4;
 use constant T_YEAR   => 12;
 
 our @EXPORT      = qw( elapsed  );
-our %EXPORT_TAGS = ( all => [ @EXPORT, @EXPORT_OK ] );
+our %EXPORT_TAGS = ( all => [ @EXPORT ] );
 
 # elapsed time formatter keys
 my $EC = 0;
