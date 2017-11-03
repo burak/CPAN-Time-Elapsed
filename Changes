@@ -3,6 +3,7 @@ Revision history for Perl extension Time::Elapsed.
 {{$NEXT}}
      - Migrate to dzil.
      - Remove obsolete perl support
+     - Added "levels" option (mila)
 
 0.32 Tue Jul  5 00:26:23 2016
      - Bump version.
