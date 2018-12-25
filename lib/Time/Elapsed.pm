@@ -1,5 +1,7 @@
 package Time::Elapsed;
 
+# ABSTRACT: Displays the elapsed time as a human readable string.
+
 use strict;
 use warnings;
 use utf8;
@@ -247,10 +249,6 @@ __END__
 =pod
 
 =encoding utf8
-
-=head1 NAME
-
-Time::Elapsed - Displays the elapsed time as a human readable string.
 
 =head1 SYNOPSIS
 
