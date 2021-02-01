@@ -43,6 +43,12 @@ _false( DE => 'Nullsekunden' );
 _false( DA => 'nul sekunder' );
 _false( FR => 'zéro seconde' );
 
+# ---[ LEVELS ]--- #
+is( elapsed(TEST_STAMP_1, {levels => 3}), '21 days, 15 hours and 5 seconds', 'levels=3' );
+is( elapsed(TEST_STAMP_1, {levels => 2}), '21 days and 15 hours',            'levels=2' );
+is( elapsed(TEST_STAMP_1, {levels => 1}), '21 days',                         'levels=1' );
+
+
 sub _false {
    my $lang   = shift || 'EN';
    my $expect = shift;
