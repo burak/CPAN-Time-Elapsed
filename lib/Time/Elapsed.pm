@@ -16,7 +16,7 @@ use constant YEAR       => 365 * DAY;
 use constant INDEX      => 0;
 use constant MULTIPLIER => 1;
 use constant FIXER      => 2;
-use base qw( Exporter );
+use parent qw( Exporter );
 use Carp qw( croak );
 
 use constant T_SECOND => 60;
