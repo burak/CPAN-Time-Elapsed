@@ -5,6 +5,7 @@ Revision history for Perl extension Time::Elapsed.
 0.33 2018-12-25 BURAK
      - Migrate to dzil.
      - Remove obsolete perl support
+     - Added "levels" option (mila)
 
 0.32 Tue Jul  5 00:26:23 2016
      - Bump version.

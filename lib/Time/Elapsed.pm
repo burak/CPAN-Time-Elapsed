@@ -100,6 +100,8 @@ sub elapsed {
                )
             );
 
+   splice @rv, $opt->{levels} if exists $opt->{levels};
+
    my $last_value = pop @rv;
 
    return @rv ? join(', ', @rv) . " $l->{other}{and} $last_value"
@@ -345,6 +347,12 @@ Language ids are case-insensitive. These are all same: C<en>, C<EN>, C<eN>.
 If this option is present and set to a treu value, then you'll get "weeks"
 instead of "days" in the output if the output has a days value between 7 days
 and 28 days.
+
+=head4 levels
+
+If this option is present, only this number of levels are in the output. E.g.
+with C<levels=E<gt>2> you just get just "years" and "months", but "days",
+"hours", "minutes" and "seconds" are stripped off.
 
 =head1 CAVEATS
 
