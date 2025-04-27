@@ -252,6 +252,10 @@ __END__
 
 Time::Elapsed - Displays the elapsed time as a human readable string.
 
+=head1 DEPRECATION NOTICE
+
+This module is B<DEPRECATED>. Please use L<Time::Duration>.
+
 =head1 SYNOPSIS
 
    use Time::Elapsed qw( elapsed );

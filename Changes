@@ -1,6 +1,7 @@
 Revision history for Perl extension Time::Elapsed.
 
 {{$NEXT}}
+    - This module is DEPRECATED. Please use Time::Duration.
 
 0.33 2018-12-25 BURAK
      - Migrate to dzil.

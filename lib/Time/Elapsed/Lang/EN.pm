@@ -48,6 +48,10 @@ __END__
 
 Time::Elapsed::Lang::EN - English language file.
 
+=head1 DEPRECATION NOTICE
+
+This module is B<DEPRECATED>. Please use L<Time::Duration>.
+
 =head1 SYNOPSIS
 
 Private module.
